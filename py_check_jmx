@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+
+####################################################
+# Author: Rhys Campbell                            #
+# Created: 04.12.2017                              #
+# Description: Python tmeplate for Nagios plugin   #
+# ##################################################
+import argparse, requests
+
+AUTHOR="Rhys Campbell"
+VERSION="0.1"
+
+# Nagios Exit Codes
+E_OK=0
+E_WARNING=1
+E_CRITICAL=2
+E_UNKNOWN=3
+
+E_STATUS=E_CRITICAL
+MSG="Initial message text..."
+
+try:
+
+    parser = argparse.ArgumentParser(description='Message goes here')
+    parser.add_argument("-H", "--host", default="localhost", help="The JMX host to query")
+    parser.add_argument("-P", "--port", default=7199, help="The JMX port")
+    parser.add_argument("-z", "--protocol", default="http", help="The protocol to use for JMX")
+    parser.add_argument("-u", "--username", default=None, help="The JMX username")
+    parser.add_argument("-p", "--password", default=None, help="The JMX password")
+    parser.add_argument("-n", "--name", default="WriteLatency", help="The metric name to query. i.e. WriteLatency")
+    parser.add_argument("-k", "--keyname", default="Count", help="The metric key to query. i.e. Count")
+    parser.add_argument("-w", "--warning", help="Set the warning threshold", type=float, dest="warning", default=95.0)
+    parser.add_argument("-c", "--critical", help="Set the critical threshold", type=float, dest="critical", default=97.0)
+    parser.add_argument("-d", "--debug", action="store_true", default=False, help="Output additional debugigng information")
+
+    args = parser.parse_args()
+
+    auth = requests.auth.HTTPBasicAuth(args.username, args.password) \
+                if args.username is not None and args.password is not None else None
+
+    host = "{0}://{1}:{2}".format(args.protocol, args.host, args.port)
+    url = "{host}/jolokia/read/org.apache.cassandra.metrics:type=ColumnFamily,*,name={name}/{key}".format(name=args.name, key=args.keyname, host=host)
+    if args.debug:
+        print("url: {0}".format(url))
+    resp = requests.get(url, auth=auth)
+    print(len(resp.text))
+    if resp.status_code != 200:
+        raise requests.exceptions.HTTPError("HTTP Status Code {0}".format(resp.status_code))
+    elif len(resp.text) == 0:
+        raise Exception("A zero-length response was received")
+
+    if args.help:
+        print_help()
+        exit(E_STATUS)
+
+except requests.exceptions.ConnectionError as e:
+    E_STATUS=E_CRITICAL
+    MSG="CRITICAL: ConnectionError {0}".format(str(e))
+except Exception as e:
+    E_STATUS=E_CRITICAL
+    MSG="CRITICAL: {0}".format(str(e))
+finally:
+    print(MSG)
+    exit(E_STATUS)
