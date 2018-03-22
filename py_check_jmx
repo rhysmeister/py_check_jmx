@@ -25,7 +25,7 @@ MSG=""
 
 try:
 
-    parser = argparse.ArgumentParser(description='Message goes here')
+    parser = argparse.ArgumentParser(description='Python Nagios Plugin to check and alert on single JMX Metrics. Uses the Jolokia JMX/HTTP bridge. The the paths for MBeans is highly variable... JConsole is very useful for browsing these.')
     parser.add_argument("-H", "--host", default="localhost", help="The JMX host to query")
     parser.add_argument("-P", "--port", default=8778, help="The Jolokia JMX port")
     parser.add_argument("-z", "--protocol", default="http", help="The protocol to use for JMX")
@@ -67,68 +67,67 @@ try:
     elif len(resp.text) == 0:
         raise Exception("A zero-length response was received")
     else:
-        try:
-            response_dict = dict(json.loads(resp.text))
-            if args.debug:
-                print(response_dict)
-            mbean = response_dict["request"]["mbean"]
-            attribute = response_dict["request"]["attribute"]
-            value = response_dict["value"]
-            if args.critical > args.warning:
-                if value < args.warning:
-                    E_STATUS=E_OK
-                    MSG="OK: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
-                                                                 attribute,
-                                                                 value,
-                                                                 mbean,
-                                                                 attribute,
-                                                                 value)
-                elif value < args.critical:
-                    E_STATUS=E_WARNING
-                    MSG="WARNING: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
-                                                                      attribute,
-                                                                      value,
-                                                                      mbean,
-                                                                      attribute,
-                                                                      value)
-                else:
-                    E_STATUS=E_CRITICAL
-                    MSG="CRITICAL: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
-                                                                      attribute,
-                                                                      value,
-                                                                      mbean,
-                                                                      attribute,
-                                                                      value)
-            elif args.critical < args.warning: # We alert if values drop too low
-                if value > args.warning:
-                    E_STATUS=E_OK
-                    MSG="OK: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
-                                                                      attribute,
-                                                                      value,
-                                                                      mbean,
-                                                                      attribute,
-                                                                      value)
-                elif value > args.critical:
-                    E_STATUS=E_WARNING
-                    MSG="WARNING: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
-                                                                      attribute,
-                                                                      value,
-                                                                      mbean,
-                                                                      attribute,
-                                                                      value)
-                else:
-                    E_STATUS=E_CRITICAL
-                    MSG="CRITICAL: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
-                                                                      attribute,
-                                                                      value,
-                                                                      mbean,
-                                                                      attribute,
-                                                                      value)
+        if args.debug:
+            print("resp.text: {0}".format(resp.text))
+        response_dict = dict(json.loads(resp.text))
+        if args.debug:
+            print(response_dict)
+        mbean = response_dict["request"]["mbean"]
+        attribute = response_dict["request"]["attribute"]
+        value = response_dict["value"]
+        if args.critical > args.warning:
+            if value < args.warning:
+                E_STATUS=E_OK
+                MSG="OK: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
+                                                             attribute,
+                                                             value,
+                                                             mbean,
+                                                             attribute,
+                                                             value)
+            elif value < args.critical:
+                E_STATUS=E_WARNING
+                MSG="WARNING: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
+                                                                  attribute,
+                                                                  value,
+                                                                  mbean,
+                                                                  attribute,
+                                                                  value)
             else:
                 E_STATUS=E_CRITICAL
-                MSG="CRITICAL: warning and critical values should not be the same."
-        except Exception as excep:
-            raise excep
+                MSG="CRITICAL: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
+                                                                  attribute,
+                                                                  value,
+                                                                  mbean,
+                                                                  attribute,
+                                                                  value)
+        elif args.critical < args.warning: # We alert if values drop too low
+            if value > args.warning:
+                E_STATUS=E_OK
+                MSG="OK: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
+                                                                  attribute,
+                                                                  value,
+                                                                  mbean,
+                                                                  attribute,
+                                                                  value)
+            elif value > args.critical:
+                E_STATUS=E_WARNING
+                MSG="WARNING: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
+                                                                  attribute,
+                                                                  value,
+                                                                  mbean,
+                                                                  attribute,
+                                                                  value)
+            else:
+                E_STATUS=E_CRITICAL
+                MSG="CRITICAL: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
+                                                                  attribute,
+                                                                  value,
+                                                                  mbean,
+                                                                  attribute,
+                                                                  value)
+        else:
+            E_STATUS=E_CRITICAL
+            MSG="CRITICAL: warning and critical values should not be the same."
 
 except requests.exceptions.ConnectionError as e:
     E_STATUS=E_CRITICAL
