@@ -75,7 +75,10 @@ try:
         mbean = response_dict["request"]["mbean"]
         attribute = response_dict["request"]["attribute"]
         value = response_dict["value"]
-        if args.critical > args.warning:
+        if value is None:
+            E_STATUS=E_OK
+            MSG="OK:  {0}/{1} returns no value. Probably needs time to warm up".format(mbean, attribute)
+        elif args.critical > args.warning:
             if value < args.warning:
                 E_STATUS=E_OK
                 MSG="OK: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
