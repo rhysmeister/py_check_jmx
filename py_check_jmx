@@ -85,24 +85,24 @@ try:
                 MSG="OK: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
                                                              attribute,
                                                              value,
-                                                             mbean.replace('=, '.'),
-                                                             attribute.replace('=, '.'),
+                                                             mbean.replace('=', '.'),
+                                                             attribute.replace('=', '.'),
                                                              value)
             elif value < args.critical:
                 E_STATUS=E_WARNING
                 MSG="WARNING: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
                                                                   attribute,
                                                                   value,
-                                                                   mbean.replace('=, '.'),
-                                                                  attribute.replace('=, '.'),
+                                                                   mbean.replace('=', '.'),
+                                                                  attribute.replace('=', '.'),
                                                                   value)
             else:
                 E_STATUS=E_CRITICAL
                 MSG="CRITICAL: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
                                                                   attribute,
                                                                   value,
-                                                                  mbean.replace('=, '.'),
-                                                                  attribute.replace('=, '.'),
+                                                                  mbean.replace('=', '.'),
+                                                                  attribute.replace('=', '.'),
                                                                   value)
         elif args.critical < args.warning: # We alert if values drop too low
             if value > args.warning:
@@ -110,24 +110,24 @@ try:
                 MSG="OK: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
                                                                   attribute,
                                                                   value,
-                                                                  mbean.replace('=, '.'),
-                                                                  attribute.replace('=, '.'),
+                                                                  mbean.replace('=', '.'),
+                                                                  attribute.replace('=', '.'),
                                                                   value)
             elif value > args.critical:
                 E_STATUS=E_WARNING
                 MSG="WARNING: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
                                                                   attribute,
                                                                   value,
-                                                                  mbean.replace('=, '.'),
-                                                                  attribute.replace('=, '.'),
+                                                                  mbean.replace('=', '.'),
+                                                                  attribute.replace('=', '.'),
                                                                   value)
             else:
                 E_STATUS=E_CRITICAL
                 MSG="CRITICAL: {0}/{1} = {2} | {3}/{4}={5}".format(mbean,
                                                                   attribute,
                                                                   value,
-                                                                  mbean.replace('=, '.'),
-                                                                  attribute.replace('=, '.'),
+                                                                  mbean.replace('=', '.'),
+                                                                  attribute.replace('=', '.'),
                                                                   value)
         else:
             E_STATUS=E_CRITICAL
