@@ -3,11 +3,11 @@
 ################################################################################################################
 # Author: Rhys Campbell                                                                                        #
 # Created: 04.12.2017                                                                                          #
-# Description: Python plugin to check Cassandra metrics using the jolokia JMX/HTTP bridge https://jolokia.org/ #                                                 #
+# Description: Python plugin to check Cassandra metrics using the jolokia JMX/HTTP bridge https://jolokia.org/ #
 # Ideas / code extracted from https://engineeringblog.yelp.com/2016/06/monitoring-cassandra-at-scale.html      #
 # This plugin is intent to check single value metrics only.                                                    #
 # Usage:                                                                                                       #
-#          ./py_check_jmx
+#          ./py_check_jmx                                                                                      #
 # ##############################################################################################################
 import argparse, requests, json
 
