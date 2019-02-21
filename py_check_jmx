@@ -38,8 +38,8 @@ try:
     parser.add_argument("-s", "--MBeanScope", default="", help="The metric scope i.e. mx_metadata, * means all")
     parser.add_argument("-n", "--MBeanName", default=None, help="The metric name to query. i.e. WriteLatency")
     parser.add_argument("-k", "--MBeanKeyname", default=None, help="The metric key to query. i.e. Count")
-    parser.add_argument("-w", "--warning", help="Set the warning threshold", type=float, dest="warning", default=95.0)
-    parser.add_argument("-c", "--critical", help="Set the critical threshold", type=float, dest="critical", default=97.0)
+    parser.add_argument("-w", "--warning", help="Set the warning threshold (set this and critical to -1 to only return the metric).", type=float, dest="warning", default=95.0)
+    parser.add_argument("-c", "--critical", help="Set the critical threshold (set this and warning to -1 to only return the metric).", type=float, dest="critical", default=97.0)
     parser.add_argument("-d", "--debug", action="store_true", default=False, help="Output additional debugigng information")
 
     args = parser.parse_args()
